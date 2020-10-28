@@ -1,0 +1,19 @@
+{
+  "name": "test-usb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-usb": "^3.0.0-alpha.4",
+    "iconv-lite": "^0.6.2",
+    "node-printer": "^1.0.4",
+    "usb": "^1.6.3"
+  }
+}
