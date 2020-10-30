@@ -4,13 +4,27 @@ class Command {
     constructor () {
         this._cmd = Command.cmd;
         this._encoding = Command.encoding;
-        this._width = Command.width;
+        this._textLength = Command.textLength;
         this._queue = [];
+        this._state = {};
         this._init();
     }
 
     _init () {
         this._queue = [...this._cmd["GSP"], 22.5, 22.5];
+        this._state = {
+            fontSize: 0,
+        }
+    }
+
+    _computeTextLength (text) {
+        const chineseCharREG = /[\u4e00-\u9fa5]/;
+        let length = 0;
+        for (let i of text) {
+            if (chineseCharREG.test(i)) length += 2;
+            else length += 1;
+        }
+        return length;
     }
 
     /**
@@ -51,8 +65,18 @@ class Command {
      * @param  {String} text
      * @return {Command}
      */
-    text (text = "") {
-        this._queue.push(...iconv.encode(text, this._encoding), "\n");
+    text (text = "", ) {
+        this._queue.push(...iconv.encode(text, this._encoding));
+        return this;
+    }
+
+    textCenter (text = "", replace = " ") {
+        let 
+        length = this._textLength / (this._state.fontSize + 1),
+        textLength = this._computeTextLength(text),
+        LRWidth = (length - textLength) / 2;
+        console.log(length)
+        this._queue.push(...iconv.encode(replace.repeat(LRWidth) + text + replace.repeat(LRWidth), this._encoding));
         return this;
     }
 
@@ -68,46 +92,38 @@ class Command {
     }
 
     /**
-     * 设置水平左右边距 
+     * 设置行间距
      * 
-     * @param  {Number} ratio 0-0.25 宽度比例，1最宽，0最窄
+     * @param  {Number} height 0-255 单位毫米，不传递就设置为默认行间距
      * @return {Command}
      */
-    paddingH (ratio = 1) {
-        if (ratio > 0.25) throw "ratio不得大于0.25！";
-        let paddingLeft = ratio * this._width, width = this._width - (paddingLeft * 2);
-        this._queue.push(...this._cmd["GSL"], paddingLeft, 0, ...this._cmd["GSW"], width, 0);
+    lineHeight (height) {
+        if (height === undefined) {
+            this._queue.push(...this._cmd["ESC2"]); //指令文档上说默认值就是3.75mm
+        } else {
+            this._queue.push(...this._cmd["ESC3"], height);
+        }
         return this;
     }
 
-    /**
-     * 设置左边距 
-     * 
-     * @param  {Number} ratio 0-1
-     * @return {Command}
-     */
-    paddingL (ratio = 1) {
-        let paddingLeft = ratio * this._width, width = this._width - paddingLeft;
-        this._queue.push(...this._cmd["GSL"], paddingLeft, 0, ...this._cmd["GSW"], width, 0);
+    fontSize (size = 1) {
+        // 0-2位代表高度，4-6位代表宽度；0-7
+        if (size > 7) throw "size不得大于8！";
+        this._state.fontSize = size;
+        const v = ((size << 4) ^ size);
+        this._queue.push(...this._cmd["GS!"], v);
         return this;
     }
 
-    /**
-     * 设置右边距 
-     * 
-     * @param  {Number} ratio
-     * @return {Command}
-     */
-    paddingR (ratio = 1) {
-        let width = this._width - (this._width * ratio);
-        this._queue.push(...this._cmd["GSL"], 0, 0, ...this._cmd["GSW"], width, 0);
+    blob (is = false) {
+        this._queue.push(...this._cmd["ESCE"], is ? 1 : 0);
         return this;
     }
 
 
 }
 Command.encoding = "GB18030";
-Command.width = 70;
+Command.textLength = 48;
 Command.cmd = {
     "GSL":  [0x1d, 0x4c], //打印左边距
     "ESCD": [0x1b, 0x64], //打印并走纸n行
@@ -116,6 +132,9 @@ Command.cmd = {
     "GS!":  [0x1d, 0x21], //设置字符大小
     "ESCB": [0x1b, 0x42], //蜂鸣器
     "GSV":  [0x1d, 0x56], //切纸
+    "ESC3": [0x1b, 0x33], //设置行间距
+    "ESC2": [0x1b, 0x32], //选择默认行间距
+    "ESCE": [0x1b, 0x45], //是否加粗
 }
 
 module.exports = Command;
