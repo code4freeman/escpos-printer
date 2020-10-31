@@ -18,7 +18,7 @@ class Command {
     }
 
     _computeTextLength (text) {
-        const chineseCharREG = /[\u4e00-\u9fa5]/;
+        const chineseCharREG = /[^\x00-\xff]/;
         let length = 0;
         for (let i of text) {
             if (chineseCharREG.test(i)) length += 2;
@@ -70,6 +70,13 @@ class Command {
         return this;
     }
 
+    /**
+     * 单行居中文本
+     * 
+     * @param  {String} text 文字
+     * @param  {String} replace 替换文字，替换空白部分
+     * @return {Command}
+     */
     textCenter (text = "", replace = " ") {
         let 
         length = this._textLength / (this._state.fontSize + 1),
@@ -77,6 +84,26 @@ class Command {
         LRWidth = (length - textLength) / 2;
         console.log(length)
         this._queue.push(...iconv.encode(replace.repeat(LRWidth) + text + replace.repeat(LRWidth), this._encoding));
+        return this;
+    }
+
+    /**
+     * 字符行，水平分割显示输入的文本集合
+     * 
+     * @param  {Array<String>} texts 文本集合
+     * @return {Command}
+     */
+    textRow (texts = []) {
+        let 
+        length = this._textLength / (this._state.fontSize + 1),
+        cellLength = length / texts.length,
+        text = "";
+        for (let i of texts) {
+            let iLength = this._computeTextLength(i), spacLength = cellLength - iLength;
+            text += i + " ".repeat(spacLength);
+        }
+        console.log(text)
+        this._queue.push(...iconv.encode(text, this._encoding));
         return this;
     }
 
@@ -106,7 +133,13 @@ class Command {
         return this;
     }
 
-    fontSize (size = 1) {
+    /**
+     * 设置字体大小
+     * 
+     * @param  {Number} size 0-7 缺省为默认大小
+     * @return {Command}
+     */
+    fontSize (size = 0) {
         // 0-2位代表高度，4-6位代表宽度；0-7
         if (size > 7) throw "size不得大于8！";
         this._state.fontSize = size;
@@ -115,6 +148,12 @@ class Command {
         return this;
     }
 
+    /**
+     * 字体加粗、取消加粗
+     * 
+     * @param  {Boolean} is 是否加粗，缺省为false
+     * @return {Command}
+     */
     blob (is = false) {
         this._queue.push(...this._cmd["ESCE"], is ? 1 : 0);
         return this;

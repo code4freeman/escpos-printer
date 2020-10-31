@@ -9,10 +9,26 @@ let cmd = new Command();
 // for (let i of new Array(24)) text += "-";
 
 !async function () {
-    cmd.fontSize(1).textCenter("餐桌23号订单", " ").newLine(3).fontSize(1).text(("-").repeat(24)).fontSize(0).newLine(1).blob(true).text("您的取餐号为：")
-    .fontSize(1).text("123456").fontSize(0)
-    .newLine().blob().text("您前面排队：5人")
-    .newLine(8).cut();
+    cmd.fontSize(1).textCenter("餐桌23号订单", " ")
+    .newLine(2)
+    .fontSize()
+    .newLine(2)
+    .textRow(["菜名", "数量", "小计"])
+    .text("-".repeat(48))
+    .textRow(["香辣花甲", "x2", "￥32.00"])
+    .textRow(["香浓猪骨汤", "x1", "￥14.00"])
+    .textRow(["杭椒炒肉", "x1", "￥39.00"])
+    .textRow(["紫菜蛋花汤", "x2", "￥8.00"])
+    .newLine(2)
+    .text("-".repeat(48))
+    .text("小计：198.01")
+    .newLine()
+    .text("实收：198.00")
+    .newLine(2)
+    .fontSize(1)
+    .textCenter("取餐号：13456")
+    .newLine(8)
+    .cut();
     await printer.write(cmd.export());
     printer.destroy();
 }();
