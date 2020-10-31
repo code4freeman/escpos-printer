@@ -10,9 +10,8 @@ let cmd = new Command();
 
 !async function () {
     cmd.fontSize(1).textCenter("餐桌23号订单", " ")
-    .newLine(2)
+    .newLine(4)
     .fontSize()
-    .newLine(2)
     .textRow(["菜名", "数量", "小计"])
     .text("-".repeat(48))
     .textRow(["香辣花甲", "x2", "￥32.00"])
