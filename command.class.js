@@ -1,4 +1,6 @@
 const iconv = require('iconv-lite');
+const getPixels = require("get-pixels");
+const fs = require("fs");
 
 class Command {
     constructor () {
@@ -159,6 +161,73 @@ class Command {
         return this;
     }
 
+    /**
+     * 打印图片 GSV0
+     * 
+     * @param  {String} imgPath 图片相对地址
+     * @return {Command}
+     */
+    async image (imgPath = "") {
+        let { data: pixelData, shape: [ width, height ] } = await new Promise((resolve, reject) => {
+            getPixels(imgPath, (err, pixels) => {
+                if(err) {
+                    reject(err);
+                    return;
+                }
+                console.log("获取像素完毕！");
+                fs.writeFileSync("out.json", JSON.stringify(pixels, null, 4));
+                resolve(pixels);
+            });
+        });
+        const pixels = [];
+        Object.keys(pixelData).forEach(k => pixels.push(pixelData[k]));
+
+        const data = [];
+        for (let l = 0; l < height; l++) {
+            const line = [];
+            for (let i = 0; i < width; i++) {
+                let idx = width * l + i;
+                const pixel = {
+                    r: pixels[idx],
+                    g: pixels[idx + 1],
+                    b: pixels[idx + 2],
+                    a: pixels[idx + 3]
+                };
+                if (pixel.a <= 127.5) {
+                    line.push(0);
+                    continue;
+                }
+                // Average 平均黑白算法
+                const gray = parseInt((pixel.r + pixel.g + pixel.b) / 3);
+                line.push(gray <= 127.5 ? 1 : 0);
+            }
+            data.push(line);
+        }
+        fs.writeFileSync("error.json", JSON.stringify(data, null, 4));
+        // throw "!stop";
+        
+        const bytes = [];
+        for (let l = 0; l < height; l++) {
+            for (let i = 0; i < Math.ceil(width / 8); i++) {
+                let byte = 0x00;
+                for (let j = 0; j < 8; j++) {
+                    if (data[l][i * 8 + j]) {
+                        byte |= 1 << 7 - j;
+                    }
+                }
+                bytes.push(byte);
+            }
+        }
+        console.log("t-2");
+        console.log(bytes.length);
+
+        if (width % 8 != 0) {
+            width += 8;
+        }
+
+        this._queue.push(...this._cmd["GSV0"], 48, width >> 3, 0, height & 0xff, (height >> 8) & 0xff, ...bytes);
+        return this;
+    }
 
 }
 Command.encoding = "GB18030";
@@ -174,6 +243,7 @@ Command.cmd = {
     "ESC3": [0x1b, 0x33], //设置行间距
     "ESC2": [0x1b, 0x32], //选择默认行间距
     "ESCE": [0x1b, 0x45], //是否加粗
+    "GSV0": [0x1d, 0x76, 0x30] //GSV0 打印光栅位图
 }
 
 module.exports = Command;
