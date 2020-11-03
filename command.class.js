@@ -168,7 +168,7 @@ class Command {
      * @return {Command}
      */
     async image (imgPath = "") {
-        let { data: pixelData, shape: [ width, height ] } = await new Promise((resolve, reject) => {
+        let { data, shape: [ width, height ] } = await new Promise((resolve, reject) => {
             getPixels(imgPath, (err, pixels) => {
                 if(err) {
                     reject(err);
@@ -180,52 +180,41 @@ class Command {
             });
         });
         const pixels = [];
-        Object.keys(pixelData).forEach(k => pixels.push(pixelData[k]));
+        Object.keys(data).forEach(k => pixels.push(data[k]));
 
-        const data = [];
-        for (let l = 0; l < height; l++) {
-            const line = [];
-            for (let i = 0; i < width; i++) {
-                let idx = width * l + i;
-                const pixel = {
-                    r: pixels[idx],
-                    g: pixels[idx + 1],
-                    b: pixels[idx + 2],
-                    a: pixels[idx + 3]
-                };
-                if (pixel.a <= 127.5) {
-                    line.push(0);
-                    continue;
-                }
-                // Average 平均黑白算法
-                const gray = parseInt((pixel.r + pixel.g + pixel.b) / 3);
-                line.push(gray <= 127.5 ? 1 : 0);
+        //转黑白
+        const binary = [];
+        for (let i = 0; i < pixels.length; i += 4) {
+            const pixel = {
+                r: pixels[i],
+                g: pixels[i + 1],
+                b: pixels[i + 2],
+                a: pixels[i + 3]
             }
-            data.push(line);
+            if (pixel.a <= 127.5) {
+                binary.push(0);
+                continue;
+            }
+            const gray = parseInt((pixel.r + pixel.g + pixel.b) / 3);
+            binary.push(gray > 127.5 ? 1 : 0);
         }
-        fs.writeFileSync("error.json", JSON.stringify(data, null, 4));
-        // throw "!stop";
-        
+        fs.writeFileSync("check.json", JSON.stringify(binary, null, 4));
+
+        //生成二进制
         const bytes = [];
-        for (let l = 0; l < height; l++) {
-            for (let i = 0; i < Math.ceil(width / 8); i++) {
-                let byte = 0x00;
-                for (let j = 0; j < 8; j++) {
-                    if (data[l][i * 8 + j]) {
-                        byte |= 1 << 7 - j;
-                    }
+        for (let i = 0; i < binary.length; i += 8) {
+            let byte = 0x00;
+            for (let j = 0; j < 8; j++) {
+                if (binary[i * 8 + j]) {
+                    byte |= 0x80 >> j;
                 }
-                bytes.push(byte);
             }
-        }
-        console.log("t-2");
-        console.log(bytes.length);
-
-        if (width % 8 != 0) {
-            width += 8;
+            bytes.push(byte);
         }
 
-        this._queue.push(...this._cmd["GSV0"], 48, width >> 3, 0, height & 0xff, (height >> 8) & 0xff, ...bytes);
+        throw "!stop";
+
+        this._queue.push(...this._cmd["GSV0"], 0, (width >> 3) & 0xff, 0, height & 0xff, (height >> 8) & 0xff, ...bytes);
         return this;
     }
 

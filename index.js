@@ -34,7 +34,7 @@ let cmd = new Command();
 
 !async function () {
     await cmd.image("./test1.png");
-    cmd.newLine(8).cut();
+    cmd.newLine(8);
     await printer.write(cmd.export());
     printer.destroy();
 }();
