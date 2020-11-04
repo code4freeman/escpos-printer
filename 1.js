@@ -168,8 +168,8 @@ class Command {
      * @return {Command}
      */
     async image (imgPath = "") {
-        let { data: pixels, shape: [ width, height, colors ] } = await new Promise((resolve, reject) => {
-            getPixels(imgPath, "image/png", (err, pixels) => {
+        let { data, shape: [ width, height ] } = await new Promise((resolve, reject) => {
+            getPixels(imgPath, (err, pixels) => {
                 if(err) {
                     reject(err);
                     return;
@@ -178,70 +178,53 @@ class Command {
                 fs.writeFileSync("out.json", JSON.stringify(pixels, null, 4));
                 resolve(pixels);
             });
-        });     
-
-        let data = [];
-        function rgb(pixel) {
-            return {
-            r: pixel[0],
-            g: pixel[1],
-            b: pixel[2],
-            a: pixel[3]
-            };
-        };
-
-        for(var i=0;i<pixels.length;i += colors){
-            data.push(rgb(new Array(colors).fill(0).map(function(_, b){
-                return pixels[ i + b ];
-            })));
-        };
-
-        data = data.map(function(pixel) {
-            if (pixel.a == 0) return 0;
-            var shouldBeWhite = pixel.r > 200 && pixel.g > 200 && pixel.b > 200;
-            return shouldBeWhite ? 0 : 1;
         });
+        const pixels = [];
+        Object.keys(data).forEach(k => pixels.push(data[k]));
 
-        var result = [];
-
-        // n blocks of lines
-        var n = Math.ceil(width / 8);
-        var x, y, b, c, i;
-
-        for (y = 0; y < height; y++) {
-
-            for (x = 0; x < n; x++) {
-
-                for (b = 0; b < 8; b++) {
-                    i = x * 8 + b;
-
-                    if (result[y * n + x] === undefined) {
-                        result[y * n + x] = 0;
-                    }
-
-                    c = x * 8 + b;
-                    if (c < width) {
-                        if (data[y * width + i]) {
-                            result[y * n + x] += (0x80 >> (b & 0x7));
-                        }
-                    }
-                }
+        //转黑白
+        const binary = [];
+        for (let i = 0; i < pixels.length; i += 4) {
+            const pixel = {
+                r: pixels[i],
+                g: pixels[i + 1],
+                b: pixels[i + 2],
+                a: pixels[i + 3]
             }
+            if (pixel.a === 0) {
+                binary.push(0);
+                continue;
+            }
+            const gray = parseInt((pixel.r + pixel.g + pixel.b) / 3);
+            binary.push(gray > 170 ? 0 : 1); // 灰度小于2/3则判断为白色，反之为黑色
         }
 
-        console.log(result);
+        //生成二进制
+        const bytes = [];
+        const xCount = Math.ceil(width / 8);
+        for (let n = 0; n < height; n++) {
+            for (let x = 0; x < xCount; x++) {
+                let byte = 0x00;
+                for (let i = 0; i < 8; i++) {
+                    if (binary[n * width + x * 8 + i]) {
+                        byte |= 0x80 >> i;
+                    }
+                }
+                bytes.push(byte);
+            }
+        }
+        console.log(bytes);
+        console.log(xCount);
+        // throw "!stop";
 
+        //测试对齐方式
+        this._queue.push(0x1b, 0x61, 1);
 
-        this._queue.push(...this._cmd["GSV0"], 0x00);
-        this._queue.push(
-            // xl, xh
-            n, 
-            0, 
-            // yl, yh
-            height & 0xff, 
-            (height >> 8) & 0xff,
-             ...result
-        );
+        this._queue.push(...this._cmd["GSV0"], 0);
+        this._queue.push(xCount & 0xff, (xCount >> 8) & 0xff, height & 0xff, (height >> 8) & 0xff, ...bytes);
+
+        //测试对齐方式恢复左对齐
+        this._queue.push(0x1b, 0x61, 0);
         return this;
     }
 
