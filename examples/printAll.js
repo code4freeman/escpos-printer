@@ -28,6 +28,12 @@ async function f () {
     .fontSize()
     .newLine(5)
 
+    //条码
+    .textCenter("条码打印测试(EAN-13)")
+    .newLine()
+    .barcode("1234567890123")
+    .newLine(5)
+
     //二维码
     .textCenter("二维码打印测试")
     .newLine();
@@ -35,6 +41,8 @@ async function f () {
     cmd.newLine(2);
 
     //图片
+    cmd.textCenter("位图测试")
+    .newLine();
     await cmd.image("./test-image.png");
     cmd.newLine(5)
     .cut();
