@@ -40,13 +40,10 @@ async function f () {
     .cut();
 
     await printer.write(cmd.export());
-    // printer.destroy();
 }
 
 !async function () {
-    for (let i = 0; i < 5; i++) {
-        await f();
-        console.log("打印完" + (i + 1) + "次！");
-    }
+    await f();
     console.log("打印完毕");
+    printer.destroy();
 }();
