@@ -31,7 +31,7 @@ async function f () {
     //条码
     .textCenter("条码打印测试(EAN-13)")
     .newLine()
-    .barcode("1234567890123")
+    .barcode("123456789012")
     .newLine(5)
 
     //二维码

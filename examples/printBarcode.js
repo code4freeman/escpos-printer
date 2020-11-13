@@ -5,8 +5,8 @@ let cmd = new Command();
 
 !async function () {
     cmd.textCenter("条码打印测试(EAN-13)")
-    .newLine(2)
-    .barcode("1234567890123")
+    cmd.newLine(2)
+    .barcode("123456789012")
     .newLine(8)
     .cut();
     await printer.write(cmd.export());
