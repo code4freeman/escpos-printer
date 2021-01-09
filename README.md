@@ -18,5 +18,7 @@ nodejs 驱动打印机打印菜单小票。
 网络打印目前没有搞， 哪有鸡巴时间来搞。
 
 ## 测试效果
-测试效果图片：
-![](./doc/test.jpg)
+1.测试效果视频:   
+ [https://www.bilibili.com/video/BV1Xo4y1d7pf/](https://www.bilibili.com/video/BV1Xo4y1d7pf/)   
+2.测试效果图片：   
+![图片加载失败](./doc/test.jpg)
