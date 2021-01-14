@@ -24,4 +24,4 @@ nodejs 驱动打印机打印菜单小票。
 ![图片加载失败](./doc/test.jpg)
 
 ## escpos 指令参考
-[佳博打印机escpos指定手册.pdf](./doc/佳博票据打印机编程手册ESCv1.0.6.pdf)
+[佳博打印机escpos指令手册.pdf](./doc/佳博票据打印机编程手册ESCv1.0.6.pdf)
