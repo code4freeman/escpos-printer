@@ -1,5 +1,7 @@
 # escpos 指令打印机驱动
 
+*仅仅自己研究测试使用，不成熟；因为自己也是遇到问题才更新；所以不建议使用这个库！*
+
 ## 介绍
 适用于nodejs的小票打印机驱动。  
 已在mac端、pc端、树莓派端(nodejs、nwjs) 下跑通。  
@@ -19,7 +21,9 @@ nodejs 驱动打印机打印菜单小票。
 
 ## 测试效果
 1.测试效果视频:   
- [https://www.bilibili.com/video/BV1Xo4y1d7pf/](https://www.bilibili.com/video/BV1Xo4y1d7pf/)   
+[80mm打印机测试视频](https://www.bilibili.com/video/BV1Xo4y1d7pf/)   
+[58mm打印模组测试视频](https://www.bilibili.com/video/BV1uN411d7KU/)
+
 2.测试效果图片：   
 ![图片加载失败](./doc/test.jpg)
 
