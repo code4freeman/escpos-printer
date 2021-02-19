@@ -20,15 +20,8 @@ nodejs 驱动打印机打印菜单小票。
 网络打印目前没有搞， 哪有鸡巴时间来搞。
 
 ## 测试效果
-1.测试效果视频:   
 [80mm打印机测试视频](https://www.bilibili.com/video/BV1Xo4y1d7pf/)   
 [58mm打印模组测试视频](https://www.bilibili.com/video/BV1uN411d7KU/)
-
-2.测试效果图片(80mm):   
-![图片加载失败](./doc/test.jpg)
-
-3.测试效果图片(58mm):    
-![图片加载失败](./doc/test58mm.jpg)
 
 ## escpos 指令参考
 [佳博打印机escpos指令手册.pdf](./doc/佳博票据打印机编程手册ESCv1.0.6.pdf)
