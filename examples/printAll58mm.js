@@ -39,12 +39,12 @@ async function f () {
     await cmd.qrcode("hello lilin!");
     cmd.newLine(2);
 
-    //图片
-    cmd.textCenter("位图测试")
-    .newLine();
-    await cmd.image("./pikaqiu58mm.png");
-    cmd.newLine(5)
-    .cut();
+    //图片，请自己引入图片资源
+    // cmd.textCenter("位图测试")
+    // .newLine();
+    // await cmd.image("./pikaqiu58mm.png");
+    // cmd.newLine(5)
+    // .cut();
 
     await printer.write(cmd.export());
 }
