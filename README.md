@@ -15,7 +15,7 @@ nodejs 驱动打印机打印菜单小票。
 或者看源码。  
 
 ## 注意
-目前只针对佳博[(佳博官网)](http://cn.gainscha.com/default.php))80mm系列印机和广州优库打印模组[(模组官网简介)](http://www.chinayoko.com/index.php?m=Product&a=show&id=251)使用usb连接方式做了测试，确保能正常使用。
+目前只针对佳博[(佳博官网)](http://cn.gainscha.com/default.php)80mm系列印机和广州优库打印模组[(模组官网简介)](http://www.chinayoko.com/index.php?m=Product&a=show&id=251)使用usb连接方式做了测试，确保能正常使用。
 其它牌子的打印机没有做实测，不过理论上来说只要打印机支持escpos指令即可兼容，也有可能各家打印机在指令兼容上面各有微调。   
 网络打印目前没有搞， 哪有鸡巴时间来搞。
 
