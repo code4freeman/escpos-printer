@@ -20,5 +20,6 @@ nodejs 驱动打印机打印菜单小票。
 网络打印目前没有搞， 哪有鸡巴时间来搞。
 
 ## 测试效果
+[使用该库辅助实现的一个简单的硬件收银机](https://www.bilibili.com/video/BV1AB4y1K7cW/)
 [80mm打印机测试视频](https://www.bilibili.com/video/BV1Xo4y1d7pf/)   
 [58mm打印模组测试视频](https://www.bilibili.com/video/BV1uN411d7KU/)
