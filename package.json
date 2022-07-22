@@ -1,7 +1,7 @@
 {
   "name": "escpos-printer",
   "version": "1.0.0",
-  "description": "",
+  "description": "nodejs escpos打印机驱动",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {},
@@ -9,8 +9,10 @@
     "escpos",
     "printer"
   ],
-  "author": "lilindog",
-  "license": "ISC",
+  "homepage": "https://github.com/lilindog/escpos-printer#README",
+  "author": "linli",
+  "license": "MIT",
+  "email": "lilin@lilin.site",
   "dependencies": {
     "get-pixels": "^3.3.2",
     "iconv-lite": "^0.6.2",
