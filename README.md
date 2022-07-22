@@ -4,6 +4,11 @@
 
 ---
 
+😀 TSPL指令集的打印机请跳转[https://github.com/lilindog/TSPL-Printer](https://github.com/lilindog/TSPL-Printer)
+
+---
+
+
 💡 最近我看到有博客引用该库，我接下来准备重构一下:     
 1. 改善代码结构（分层），增加escpos指令的打印状态获取; 最近在研究tsc打印指令；等我缓过来就来完成这些工作。     
 2. 图片转bitmap算法自己实现（目前正在做）,去除之前的node环境的相关依赖，更方便于移植到如小程序、混合app的蓝牙打印场景。       
